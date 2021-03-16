@@ -21,3 +21,5 @@ browsepy.egg-info/*
 **.egg-info/*
 **.pyc
 **/node_modules/*
+venv/
+.vscode/

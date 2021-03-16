@@ -14,10 +14,10 @@ import logging
 from flask import current_app, send_from_directory
 from werkzeug.utils import cached_property
 
-from . import compat
-from .compat import range
-from .stream import TarFileStream
-from .exceptions import OutsideDirectoryBase, OutsideRemovableBase, \
+from browsepy import compat
+from browsepy.compat import range
+from browsepy.stream import TarFileStream
+from browsepy.exceptions import OutsideDirectoryBase, OutsideRemovableBase, \
                         PathTooLongError, FilenameTooLongError
 
 
@@ -216,6 +216,14 @@ class Node(object):
         :rtype: str
         '''
         return os.path.basename(self.path)
+        
+    @property
+    def content(self):
+        return open(self.path, 'r').read()
+
+    @property
+    def dir_name(self):
+        return os.path.dirname(self.path)
 
     @property
     def type(self):
@@ -503,20 +511,20 @@ class Directory(Node):
             ]
         if self.can_upload:
             widgets.extend((
-                self.plugin_manager.create_widget(
-                    'head',
-                    'script',
-                    file=self,
-                    endpoint='static',
-                    filename='browse.directory.head.js'
-                ),
-                self.plugin_manager.create_widget(
-                    'scripts',
-                    'script',
-                    file=self,
-                    endpoint='static',
-                    filename='browse.directory.body.js'
-                ),
+                # self.plugin_manager.create_widget(
+                #     'head',
+                #     'script',
+                #     file=self,
+                #     endpoint='static',
+                #     filename='browse.directory.head.js'
+                # ),
+                # self.plugin_manager.create_widget(
+                #     'scripts',
+                #     'script',
+                #     file=self,
+                #     endpoint='static',
+                #     filename='browse.directory.body.js'
+                # ),
                 self.plugin_manager.create_widget(
                     'header',
                     'upload',

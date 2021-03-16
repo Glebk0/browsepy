@@ -100,37 +100,58 @@
 {% if file.is_empty %}
     <p>No files in directory</p>
 {% else %}
-    <table class="browser">
-        <thead>
-            <tr>
-              {{ th('Name', 'text', 'text', 3) }}
-              {{ th('Mimetype', 'type') }}
-              {{ th('Modified', 'modified', 'numeric') }}
-              {{ th('Size', 'size', 'numeric') }}
-            </tr>
-        </thead>
-        <tbody>
-            {% for f in file.listdir(sortkey=sort_fnc, reverse=sort_reverse) %}
-                <tr>
-                    {% if f.link %}
-                      <td class="icon {{ f.link.icon }}"></td>
-                      <td>{{ draw_widget(f, f.link) }}</td>
-                    {% else %}
-                      <td></td>
-                      <td></td>
-                    {% endif %}
-                    <td>{{ draw_widgets(f, 'entry-actions') }}</td>
-                    <td>{{ f.type or '' }}</td>
-                    <td>{{ f.modified or '' }}</td>
-                    <td>{{ f.size or '' }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="flexcontainer">
+    <div class="listing">
+      <table class="browser">
+          <thead>
+              <tr>
+                {{ th('Name', 'text', 'text', 3) }}
+              </tr>
+          </thead>
+          <tbody>
+              {% for f in file.listdir(sortkey=sort_fnc, reverse=sort_reverse) %}
+                  <tr>
+                      {% if f.link %}
+                        <td class="icon {{ f.link.icon }}"></td>
+                        <td>{{ draw_widget(f, f.link) }}</td>
+                      {% else %}
+                        <td></td>
+                        <td></td>
+                      {% endif %}
+                      <td>{{ draw_widgets(f, 'entry-actions') }}</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+    </div>
+    <div id="fcontent" class="fcontent">
+      <p style="text-align:center"><b> File content: </b></p>
+      <p style="text-align:center"><i> Click on a file to see its contents</i></p>
+    </div>
+{{ content }}
+
+    </div>
 {% endif %}
 {% endblock %}
 
 {% block content_footer %}
 {{ draw_widgets(file, 'footer') }}
+<script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
+<script>
+$(document).ready(function () {
+  $('a[href*="open"]').click(function (e) {
+      e.preventDefault();
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+              document.getElementById("fcontent").innerHTML =
+                  this.responseText;
+          }
+      };
+      xhttp.open("GET", this.href, true);
+      xhttp.send();
+  });
+});
+</script>
 {% endblock %}
 {% endblock %}

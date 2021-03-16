@@ -10,10 +10,10 @@ import warnings
 
 import flask
 
-from . import app
-from . import __meta__ as meta
-from .compat import PY_LEGACY, getdebug, get_terminal_size
-from .transform.glob import translate
+from browsepy import app
+from browsepy import __meta__ as meta
+from browsepy.compat import PY_LEGACY, getdebug, get_terminal_size
+from browsepy.transform.glob import translate
 
 
 class HelpFormatter(argparse.RawTextHelpFormatter):

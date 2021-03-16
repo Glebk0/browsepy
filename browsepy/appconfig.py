@@ -1,7 +1,7 @@
 import flask
 import flask.config
 
-from .compat import basestring
+from browsepy.compat import basestring
 
 
 class Config(flask.config.Config):

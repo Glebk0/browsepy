@@ -10,9 +10,9 @@ import collections
 from flask import current_app
 from werkzeug.utils import cached_property
 
-from . import mimetype
-from . import compat
-from .compat import deprecated, usedoc
+from browsepy import mimetype
+from browsepy import compat
+from browsepy.compat import deprecated, usedoc
 
 
 def defaultsnamedtuple(name, fields, defaults=None):
@@ -598,7 +598,7 @@ class MimetypeActionPluginManager(WidgetPluginManager, MimetypePluginManager):
     def _widget(self):
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', category=DeprecationWarning)
-            from . import widget
+            from browsepy import widget
         return widget
 
     @cached_property

@@ -9,7 +9,7 @@ import warnings
 from markupsafe import Markup
 from flask import url_for
 
-from .compat import deprecated
+from browsepy.compat import deprecated
 
 
 warnings.warn('Deprecated module widget', category=DeprecationWarning)

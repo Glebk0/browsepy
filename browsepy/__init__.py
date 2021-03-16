@@ -12,13 +12,13 @@ from flask import Response, request, render_template, redirect, \
                   make_response
 from werkzeug.exceptions import NotFound
 
-from .appconfig import Flask
-from .manager import PluginManager
-from .file import Node, secure_filename
-from .exceptions import OutsideRemovableBase, OutsideDirectoryBase, \
+from browsepy.appconfig import Flask
+from browsepy.manager import PluginManager
+from browsepy.file import Node, secure_filename
+from browsepy.exceptions import OutsideRemovableBase, OutsideDirectoryBase, \
                         InvalidFilenameError, InvalidPathError
-from . import compat
-from . import __meta__ as meta
+from browsepy import compat
+from browsepy import __meta__ as meta
 
 __app__ = meta.app  # noqa
 __version__ = meta.version  # noqa
@@ -207,8 +207,16 @@ def browse(path):
 def open_file(path):
     try:
         file = Node.from_urlpath(path)
+        content = file.content
         if file.is_file and not file.is_excluded:
-            return send_from_directory(file.parent.path, file.name)
+            return stream_template(
+               'file_preview.html',
+               content=content,
+               file_name=file.name 
+            )
+        # will probably use send_from_directory to show HTML reports, but not sure yet
+        #     return send_from_directory(file.parent.path, file.name)
+            
     except OutsideDirectoryBase:
         pass
     return NotFound()

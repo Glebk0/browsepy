@@ -93,7 +93,6 @@ setup(
     package_data={  # ignored by sdist (see MANIFEST.in), used by bdist_wheel
         'browsepy': [
             'templates/*',
-            'static/fonts/*',
             'static/*.*',  # do not capture directories
         ],
         'browsepy.plugin.player': [
