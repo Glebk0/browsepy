@@ -35,7 +35,7 @@ app = Flask(
     template_folder=os.path.join(__basedir__, "templates")
     )
 app.config.update(
-    directory_base=compat.getcwd(),
+    directory_base=os.getenv("DIRECTORY_BASE", compat.getcwd()),
     directory_start=None,
     directory_remove=None,
     directory_upload=None,

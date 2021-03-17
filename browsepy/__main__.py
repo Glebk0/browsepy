@@ -54,7 +54,7 @@ class ArgParse(argparse.ArgumentParser):
     default_removable = app.config['directory_remove']
     default_upload = app.config['directory_upload']
 
-    default_host = os.getenv('BROWSEPY_HOST', '127.0.0.1')
+    default_host = os.getenv('BROWSEPY_HOST', '0.0.0.0')
     default_port = os.getenv('BROWSEPY_PORT', '8080')
     plugin_action_class = PluginAction
 

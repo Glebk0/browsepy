@@ -90,18 +90,17 @@ setup(
             'browsepy=browsepy.__main__:main'
             )
         },
-    package_data={  # ignored by sdist (see MANIFEST.in), used by bdist_wheel
+    package_data={
         'browsepy': [
             'templates/*',
-            'static/*.*',  # do not capture directories
+            'static/*.*',
+            'static/fonts/*' 
         ],
         'browsepy.plugin.player': [
             'templates/*',
             'static/*/*',
         ]},
-    install_requires=['flask', 'unicategories'] + extra_requires,
-    test_suite='browsepy.tests',
-    test_runner='browsepy.tests.runner:DebuggerTextTestRunner',
+    install_requires=['flask', 'gunicorn', 'unicategories'] + extra_requires,
     zip_safe=False,
     platforms='any'
 )

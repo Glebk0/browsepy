@@ -10,6 +10,7 @@ backports.shutil_get_terminal_size
 # for building
 setuptools
 wheel
+gunicorn
 
 # for Makefile tasks (testing, coverage, docs)
 pep8
