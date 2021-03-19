@@ -20,11 +20,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-div {
-  resize: both;
-  overflow: auto;
-}
-
 .flexcontainer {
   display: flex;
   max-height: 800px;
@@ -32,13 +27,19 @@ div {
 
 .listing {
   flex-basis: 25%;
-  border: 3px solid #000000;
+  border: 3px #333;
+  border-style: none solid solid solid;
   min-width: 25%;
+  resize: both;
+  overflow: auto;
 }
 
 .fcontent {
   flex-grow: 3;
-  border: 3px solid #000000;
+  border: 3px #333;
+  border-style: none solid solid none;
+  resize: both;
+  overflow: auto; 
 }
 
 p, pre {
@@ -183,21 +184,49 @@ table.browser td:nth-child(3) {
   text-align: left;
 }
 
-h1 {
-  line-height: 1.15em;
-  font-size: 3em;
-  white-space: normal;
-  word-wrap: normal;
+ol.navbar {
+  list-style-type: none;
   margin: 0;
-  padding: 0 0 0.3em;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+}
+
+ol.navbar li {
+  float: left;
+  border-right:1px solid #bbb;
+}
+
+ol.navbar li:last-child {
+  border-right: none;
+}
+
+ol.navbar li a {
   display: block;
-  color: black;
-  text-shadow: 1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 0 0 white, -1px 0 0 white, 0 -1px 0 white, 0 1px 0 white, 2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 0 0 black, -2px 0 0 black, 0 2px 0 black, 0 -2px 0 black, 2px 1px 0 black, -2px 1px 0 black, 1px 2px 0 black, 1px -2px 0 black, 2px -1px 0 black, -2px -1px 0 black, -1px 2px 0 black, -1px -2px 0 black;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+ol.navbar li a:hover:not(.active) {
+  background-color: #111;
+}
+
+ol.navbar li span {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  background-color: #4CAF50;
 }
 
 ol.path,
 ol.path li {
-  display: inline;
   margin: 0;
   padding: 0;
 }
@@ -214,46 +243,6 @@ ol.path li:first-child *:before,
 ol.path li:last-child *:after,
 ol.path li *.root:after {
   content: '';
-}
-
-ul.navbar,
-ul.footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: auto;
-  margin: 0;
-  padding: 0 1em;
-  display: block;
-  line-height: 2.5em;
-  background: #333;
-  color: white;
-}
-
-ul.navbar a,
-ul.footer a {
-  color: white;
-  font-weight: bold;
-}
-
-ul.navbar {
-  top: 0;
-}
-
-ul.footer {
-  bottom: 0;
-}
-
-ul.navbar a:hover {
-  color: gray;
-}
-
-ul.navbar > li,
-ul.footer > li {
-  list-style: none;
-  display: inline;
-  margin-right: 10px;
-  width: 100%;
 }
 
 .inode.icon:after,

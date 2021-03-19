@@ -222,6 +222,9 @@ def open_file(path):
         pass
     return NotFound()
 
+@app.route('/about')
+def about(path):
+    pass
 
 @app.route("/download/file/<path:path>")
 def download_file(path):
