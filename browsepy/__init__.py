@@ -202,21 +202,22 @@ def browse(path):
         pass
     return NotFound()
 
-
+# TODO
+# logs highlighting
+# json formatting
+# csv formatting
 @app.route('/open/<path:path>', endpoint="open")
 def open_file(path):
     try:
         file = Node.from_urlpath(path)
         content = file.content
-        if file.is_file and not file.is_excluded:
+        if file.is_file and not file.is_excluded and file.extension != 'html':
             return stream_template(
                'file_preview.html',
                content=content,
                file_name=file.name 
             )
-        # will probably use send_from_directory to show HTML reports, but not sure yet
-        #     return send_from_directory(file.parent.path, file.name)
-            
+        return send_from_directory(file.parent.path, file.name)
     except OutsideDirectoryBase:
         pass
     return NotFound()

@@ -219,10 +219,22 @@ class Node(object):
         
     @property
     def content(self):
+        '''
+        Get the file content
+
+        ::returns: file content
+        :rtype: str
+        '''
         return open(self.path, 'r').read()
 
     @property
     def dir_name(self):
+        '''
+        Get directory name
+
+        ::returns: dirname
+        :rtype: str
+        '''
         return os.path.dirname(self.path)
 
     @property
@@ -234,6 +246,16 @@ class Node(object):
         :rtype: str
         '''
         return self.mimetype.split(";", 1)[0]
+
+    @property
+    def extension(self):
+        '''
+        Get the file extension from mimetype.
+
+        :returns: file extension
+        :rtype: str
+        '''
+        return self.type.split("/")[1]
 
     @property
     def category(self):

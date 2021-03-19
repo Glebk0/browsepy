@@ -139,7 +139,7 @@
 <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
 <script>
 $(document).ready(function () {
-  $('a[href*="open"]').click(function (e) {
+  $('a[href*="open"]').not('a[href$=".html"]').click(function (e) {
       e.preventDefault();
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
