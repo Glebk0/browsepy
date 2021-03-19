@@ -31,8 +31,9 @@ div {
 }
 
 .listing {
-  flex-basis: 20%;
+  flex-basis: 25%;
   border: 3px solid #000000;
+  min-width: 25%;
 }
 
 .fcontent {
