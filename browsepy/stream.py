@@ -1,4 +1,3 @@
-
 import os
 import os.path
 import tarfile
@@ -7,7 +6,7 @@ import threading
 
 
 class TarFileStream(object):
-    '''
+    """
     Tarfile which compresses while reading for streaming.
 
     Buffsize can be provided, it must be 512 multiple (the tar block size) for
@@ -16,13 +15,14 @@ class TarFileStream(object):
     Note on corroutines: this class uses threading by default, but
     corroutine-based applications can change this behavior overriding the
     :attr:`event_class` and :attr:`thread_class` values.
-    '''
+    """
+
     event_class = threading.Event
     thread_class = threading.Thread
     tarfile_class = tarfile.open
 
     def __init__(self, path, buffsize=10240, exclude=None):
-        '''
+        """
         Internal tarfile object will be created, and compression will start
         on a thread until buffer became full with writes becoming locked until
         a read occurs.
@@ -33,7 +33,7 @@ class TarFileStream(object):
         :type buffsize: int
         :param exclude: path filter function, defaults to None
         :type exclude: callable
-        '''
+        """
         self.path = path
         self.name = os.path.basename(path) + ".tgz"
         self.exclude = exclude
@@ -44,15 +44,13 @@ class TarFileStream(object):
         self._add = self.event_class()
         self._result = self.event_class()
         self._tarfile = self.tarfile_class(  # stream write
-            fileobj=self,
-            mode="w|gz",
-            bufsize=buffsize
-            )
+            fileobj=self, mode="w|gz", bufsize=buffsize
+        )
         self._th = self.thread_class(target=self.fill)
         self._th.start()
 
     def fill(self):
-        '''
+        """
         Writes data on internal tarfile instance, which writes to current
         object, using :meth:`write`.
 
@@ -60,14 +58,15 @@ class TarFileStream(object):
 
         This method is called automatically, on a thread, on initialization,
         so there is little need to call it manually.
-        '''
+        """
         if self.exclude:
             exclude = self.exclude
             ap = functools.partial(os.path.join, self.path)
             self._tarfile.add(
-                self.path, "",
-                filter=lambda info: None if exclude(ap(info.name)) else info
-                )
+                self.path,
+                "",
+                filter=lambda info: None if exclude(ap(info.name)) else info,
+            )
         else:
             self._tarfile.add(self.path, "")
         self._tarfile.close()  # force stream flush
@@ -76,7 +75,7 @@ class TarFileStream(object):
             self._result.set()
 
     def write(self, data):
-        '''
+        """
         Write method used by internal tarfile instance to output data.
         This method blocks tarfile execution once internal buffer is full.
 
@@ -87,7 +86,7 @@ class TarFileStream(object):
         :type data: bytes
         :returns: number of bytes written
         :rtype: int
-        '''
+        """
         self._add.wait()
         self._data += data
         if len(self._data) > self._want:
@@ -96,7 +95,7 @@ class TarFileStream(object):
         return len(data)
 
     def read(self, want=0):
-        '''
+        """
         Read method, gets data from internal buffer while releasing
         :meth:`write` locks when needed.
 
@@ -111,7 +110,7 @@ class TarFileStream(object):
         :type want: int
         :returns: tarfile data as bytes
         :rtype: bytes
-        '''
+        """
         if self._finished:
             if self._finished == 1:
                 self._finished += 1
@@ -133,7 +132,7 @@ class TarFileStream(object):
         return data
 
     def __iter__(self):
-        '''
+        """
         Iterate through tarfile result chunks.
 
         Similarly to :meth:`read`, this methos must ran on a different thread
@@ -141,7 +140,7 @@ class TarFileStream(object):
 
         :yields: data chunks as taken from :meth:`read`.
         :ytype: bytes
-        '''
+        """
         data = self.read()
         while data:
             yield data

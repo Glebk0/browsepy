@@ -5,11 +5,12 @@ from browsepy.compat import basestring
 
 
 class Config(flask.config.Config):
-    '''
+    """
     Flask-compatible case-insensitive Config classt.
 
     See :type:`flask.config.Config` for more info.
-    '''
+    """
+
     def __init__(self, root, defaults=None):
         if defaults:
             defaults = self.gendict(defaults)
@@ -17,26 +18,26 @@ class Config(flask.config.Config):
 
     @classmethod
     def genkey(cls, k):
-        '''
+        """
         Key translation function.
 
         :param k: key
         :type k: str
         :returns: uppercase key
         ;rtype: str
-        '''
+        """
         return k.upper() if isinstance(k, basestring) else k
 
     @classmethod
     def gendict(cls, *args, **kwargs):
-        '''
+        """
         Pre-translated key dictionary constructor.
 
         See :type:`dict` for more info.
 
         :returns: dictionary with uppercase keys
         :rtype: dict
-        '''
+        """
         gk = cls.genkey
         return dict((gk(k), v) for k, v in dict(*args, **kwargs).items())
 
@@ -60,9 +61,10 @@ class Config(flask.config.Config):
 
 
 class Flask(flask.Flask):
-    '''
+    """
     Flask class using case-insensitive :type:`Config` class.
 
     See :type:`flask.Flask` for more info.
-    '''
+    """
+
     config_class = Config

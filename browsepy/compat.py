@@ -13,8 +13,8 @@ import posixpath
 import ntpath
 
 FS_ENCODING = sys.getfilesystemencoding()
-PY_LEGACY = sys.version_info < (3, )
-TRUE_VALUES = frozenset(('true', 'yes', '1', 'enable', 'enabled', True, 1))
+PY_LEGACY = sys.version_info < (3,)
+TRUE_VALUES = frozenset(("true", "yes", "1", "enable", "enabled", True, 1))
 
 try:
     from os import scandir, walk
@@ -28,19 +28,19 @@ except ImportError:
 
 
 def isexec(path):
-    '''
+    """
     Check if given path points to an executable file.
 
     :param path: file path
     :type path: str
     :return: True if executable, False otherwise
     :rtype: bool
-    '''
+    """
     return os.path.isfile(path) and os.access(path, os.X_OK)
 
 
 def fsdecode(path, os_name=os.name, fs_encoding=FS_ENCODING, errors=None):
-    '''
+    """
     Decode given path.
 
     :param path: path will be decoded if using bytes
@@ -51,17 +51,17 @@ def fsdecode(path, os_name=os.name, fs_encoding=FS_ENCODING, errors=None):
     :type fs_encoding: str
     :return: decoded path
     :rtype: str
-    '''
+    """
     if not isinstance(path, bytes):
         return path
     if not errors:
-        use_strict = PY_LEGACY or os_name == 'nt'
-        errors = 'strict' if use_strict else 'surrogateescape'
+        use_strict = PY_LEGACY or os_name == "nt"
+        errors = "strict" if use_strict else "surrogateescape"
     return path.decode(fs_encoding, errors=errors)
 
 
 def fsencode(path, os_name=os.name, fs_encoding=FS_ENCODING, errors=None):
-    '''
+    """
     Encode given path.
 
     :param path: path will be encoded if not using bytes
@@ -72,17 +72,17 @@ def fsencode(path, os_name=os.name, fs_encoding=FS_ENCODING, errors=None):
     :type fs_encoding: str
     :return: encoded path
     :rtype: bytes
-    '''
+    """
     if isinstance(path, bytes):
         return path
     if not errors:
-        use_strict = PY_LEGACY or os_name == 'nt'
-        errors = 'strict' if use_strict else 'surrogateescape'
+        use_strict = PY_LEGACY or os_name == "nt"
+        errors = "strict" if use_strict else "surrogateescape"
     return path.encode(fs_encoding, errors=errors)
 
 
 def getcwd(fs_encoding=FS_ENCODING, cwd_fnc=os.getcwd):
-    '''
+    """
     Get current work directory's absolute path.
     Like os.getcwd but garanteed to return an unicode-str object.
 
@@ -92,13 +92,13 @@ def getcwd(fs_encoding=FS_ENCODING, cwd_fnc=os.getcwd):
     :type cwd_fnc: Callable
     :return: path
     :rtype: str
-    '''
+    """
     path = fsdecode(cwd_fnc(), fs_encoding=fs_encoding)
     return os.path.abspath(path)
 
 
 def getdebug(environ=os.environ, true_values=TRUE_VALUES):
-    '''
+    """
     Get if app is expected to be ran in debug mode looking at environment
     variables.
 
@@ -106,12 +106,12 @@ def getdebug(environ=os.environ, true_values=TRUE_VALUES):
     :type environ: collections.abc.Mapping
     :returns: True if debug contains a true-like string, False otherwise
     :rtype: bool
-    '''
-    return environ.get('DEBUG', '').lower() in true_values
+    """
+    return environ.get("DEBUG", "").lower() in true_values
 
 
 def deprecated(func_or_text, environ=os.environ):
-    '''
+    """
     Decorator used to mark functions as deprecated. It will result in a
     warning being emmitted hen the function is called.
 
@@ -133,23 +133,25 @@ def deprecated(func_or_text, environ=os.environ):
     :type environ: collections.abc.Mapping
     :returns: nested decorator or new decorated function (depending on params)
     :rtype: callable
-    '''
+    """
+
     def inner(func):
         message = (
-            'Deprecated function {}.'.format(func.__name__)
-            if callable(func_or_text) else
-            func_or_text
-            )
+            "Deprecated function {}.".format(func.__name__)
+            if callable(func_or_text)
+            else func_or_text
+        )
 
         @functools.wraps(func)
         def new_func(*args, **kwargs):
             with warnings.catch_warnings():
                 if getdebug(environ):
-                    warnings.simplefilter('always', DeprecationWarning)
-                warnings.warn(message, category=DeprecationWarning,
-                              stacklevel=3)
+                    warnings.simplefilter("always", DeprecationWarning)
+                warnings.warn(message, category=DeprecationWarning, stacklevel=3)
             return func(*args, **kwargs)
+
         return new_func
+
     return inner(func_or_text) if callable(func_or_text) else inner
 
 
@@ -173,14 +175,16 @@ def usedoc(other):
     :returns: decorator function
     :rtype: callable
     '''
+
     def inner(fnc):
-        fnc.__doc__ = fnc.__doc__ or getattr(other, '__doc__')
+        fnc.__doc__ = fnc.__doc__ or getattr(other, "__doc__")
         return fnc
+
     return inner
 
 
 def pathsplit(value, sep=os.pathsep):
-    '''
+    """
     Get enviroment PATH elements as list.
 
     This function only cares about spliting across OSes.
@@ -191,15 +195,15 @@ def pathsplit(value, sep=os.pathsep):
     :type sep: str
     :yields: every path
     :ytype: str
-    '''
+    """
     for part in value.split(sep):
-        if part[:1] == part[-1:] == '"' or part[:1] == part[-1:] == '\'':
+        if part[:1] == part[-1:] == '"' or part[:1] == part[-1:] == "'":
             part = part[1:-1]
         yield part
 
 
 def pathparse(value, sep=os.pathsep, os_sep=os.sep):
-    '''
+    """
     Get enviroment PATH directories as list.
 
     This function cares about spliting, escapes and normalization of paths
@@ -213,16 +217,18 @@ def pathparse(value, sep=os.pathsep, os_sep=os.sep):
     :type os_sep: str
     :yields: every path
     :ytype: str
-    '''
+    """
     escapes = []
-    normpath = ntpath.normpath if os_sep == '\\' else posixpath.normpath
-    if '\\' not in (os_sep, sep):
-        escapes.extend((
-            ('\\\\', '<ESCAPE-ESCAPE>', '\\'),
-            ('\\"', '<ESCAPE-DQUOTE>', '"'),
-            ('\\\'', '<ESCAPE-SQUOTE>', '\''),
-            ('\\%s' % sep, '<ESCAPE-PATHSEP>', sep),
-            ))
+    normpath = ntpath.normpath if os_sep == "\\" else posixpath.normpath
+    if "\\" not in (os_sep, sep):
+        escapes.extend(
+            (
+                ("\\\\", "<ESCAPE-ESCAPE>", "\\"),
+                ('\\"', "<ESCAPE-DQUOTE>", '"'),
+                ("\\'", "<ESCAPE-SQUOTE>", "'"),
+                ("\\%s" % sep, "<ESCAPE-PATHSEP>", sep),
+            )
+        )
     for original, escape, unescape in escapes:
         value = value.replace(original, escape)
     for part in pathsplit(value, sep=sep):
@@ -233,43 +239,47 @@ def pathparse(value, sep=os.pathsep, os_sep=os.sep):
         yield normpath(fsdecode(part))
 
 
-def pathconf(path,
-             os_name=os.name,
-             isdir_fnc=os.path.isdir,
-             pathconf_fnc=getattr(os, 'pathconf', None),
-             pathconf_names=getattr(os, 'pathconf_names', ())):
-    '''
+def pathconf(
+    path,
+    os_name=os.name,
+    isdir_fnc=os.path.isdir,
+    pathconf_fnc=getattr(os, "pathconf", None),
+    pathconf_names=getattr(os, "pathconf_names", ()),
+):
+    """
     Get all pathconf variables for given path.
 
     :param path: absolute fs path
     :type path: str
     :returns: dictionary containing pathconf keys and their values (both str)
     :rtype: dict
-    '''
+    """
 
     if pathconf_fnc and pathconf_names:
         return {key: pathconf_fnc(path, key) for key in pathconf_names}
-    if os_name == 'nt':
+    if os_name == "nt":
         maxpath = 246 if isdir_fnc(path) else 259  # 260 minus <END>
     else:
         maxpath = 255  # conservative sane default
     return {
-        'PC_PATH_MAX': maxpath,
-        'PC_NAME_MAX': maxpath - len(path),
-        }
+        "PC_PATH_MAX": maxpath,
+        "PC_NAME_MAX": maxpath - len(path),
+    }
 
 
-ENV_PATH = tuple(pathparse(os.getenv('PATH', '')))
-ENV_PATHEXT = tuple(pathsplit(os.getenv('PATHEXT', '')))
+ENV_PATH = tuple(pathparse(os.getenv("PATH", "")))
+ENV_PATHEXT = tuple(pathsplit(os.getenv("PATHEXT", "")))
 
 
-def which(name,
-          env_path=ENV_PATH,
-          env_path_ext=ENV_PATHEXT,
-          is_executable_fnc=isexec,
-          path_join_fnc=os.path.join,
-          os_name=os.name):
-    '''
+def which(
+    name,
+    env_path=ENV_PATH,
+    env_path_ext=ENV_PATHEXT,
+    is_executable_fnc=isexec,
+    path_join_fnc=os.path.join,
+    os_name=os.name,
+):
+    """
     Get command absolute path.
 
     :param name: name of executable command
@@ -285,7 +295,7 @@ def which(name,
     :type os_name: str
     :return: absolute path
     :rtype: str or None
-    '''
+    """
     for path in env_path:
         for suffix in env_path_ext:
             exe_file = path_join_fnc(path, name) + suffix
@@ -295,7 +305,7 @@ def which(name,
 
 
 def re_escape(pattern, chars=frozenset("()[]{}?*+|^$\\.-#")):
-    '''
+    """
     Escape all special regex characters in pattern.
     Logic taken from regex module.
 
@@ -303,13 +313,12 @@ def re_escape(pattern, chars=frozenset("()[]{}?*+|^$\\.-#")):
     :type patterm: str
     :returns: escaped pattern
     :rtype: str
-    '''
-    escape = '\\{}'.format
-    return ''.join(
-        escape(c) if c in chars or c.isspace() else
-        '\\000' if c == '\x00' else c
+    """
+    escape = "\\{}".format
+    return "".join(
+        escape(c) if c in chars or c.isspace() else "\\000" if c == "\x00" else c
         for c in pattern
-        )
+    )
 
 
 if PY_LEGACY:

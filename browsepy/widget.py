@@ -1,9 +1,9 @@
-'''
+"""
 WARNING: deprecated module.
 
 API defined in this module has been deprecated in version 0.5 will likely be
 removed at 0.6.
-'''
+"""
 import warnings
 
 from markupsafe import Markup
@@ -12,14 +12,14 @@ from flask import url_for
 from browsepy.compat import deprecated
 
 
-warnings.warn('Deprecated module widget', category=DeprecationWarning)
+warnings.warn("Deprecated module widget", category=DeprecationWarning)
 
 
 class WidgetBase(object):
-    _type = 'base'
+    _type = "base"
     place = None
 
-    @deprecated('Deprecated widget API')
+    @deprecated("Deprecated widget API")
     def __new__(cls, *args, **kwargs):
         return super(WidgetBase, cls).__new__(cls)
 
@@ -32,14 +32,14 @@ class WidgetBase(object):
 
     @classmethod
     def from_file(cls, file):
-        if not hasattr(cls, '__empty__'):
+        if not hasattr(cls, "__empty__"):
             cls.__empty__ = cls()
         return cls.__empty__.for_file(file)
 
 
 class LinkWidget(WidgetBase):
-    _type = 'link'
-    place = 'link'
+    _type = "link"
+    place = "link"
 
     def __init__(self, text=None, css=None, icon=None):
         self.text = text
@@ -52,26 +52,28 @@ class LinkWidget(WidgetBase):
             return self.__class__(
                 file.name if self.text is None else self.text,
                 self.css,
-                self.icon if self.icon is not None else
-                'dir-icon' if file.is_directory else
-                'file-icon',
+                self.icon
+                if self.icon is not None
+                else "dir-icon"
+                if file.is_directory
+                else "file-icon",
             )
         return self
 
 
 class ButtonWidget(WidgetBase):
-    _type = 'button'
-    place = 'button'
+    _type = "button"
+    place = "button"
 
-    def __init__(self, html='', text='', css=''):
+    def __init__(self, html="", text="", css=""):
         self.content = Markup(html) if html else text
         self.css = css
         super(ButtonWidget, self).__init__()
 
 
 class StyleWidget(WidgetBase):
-    _type = 'stylesheet'
-    place = 'style'
+    _type = "stylesheet"
+    place = "style"
 
     @property
     def href(self):
@@ -79,8 +81,8 @@ class StyleWidget(WidgetBase):
 
 
 class JavascriptWidget(WidgetBase):
-    _type = 'script'
-    place = 'javascript'
+    _type = "script"
+    place = "javascript"
 
     @property
     def src(self):

@@ -7,8 +7,8 @@ import mimetypes
 
 from browsepy.compat import FileNotFoundError, which  # noqa
 
-generic_mimetypes = frozenset(('application/octet-stream', None))
-re_mime_validate = re.compile('\w+/\w+(; \w+=[^;]+)*')
+generic_mimetypes = frozenset(("application/octet-stream", None))
+re_mime_validate = re.compile("\w+/\w+(; \w+=[^;]+)*")
 
 
 def by_python(path):
@@ -16,29 +16,29 @@ def by_python(path):
     if mime in generic_mimetypes:
         return None
     return "%s%s%s" % (
-        mime or "application/octet-stream", "; "
-        if encoding else
-        "", encoding or ""
-        )
+        mime or "application/octet-stream",
+        "; " if encoding else "",
+        encoding or "",
+    )
 
 
-if which('file'):
+if which("file"):
+
     def by_file(path):
         try:
             output = subprocess.check_output(
-                ("file", "-ib", path),
-                universal_newlines=True
-                ).strip()
-            if (
-              re_mime_validate.match(output) and
-              output not in generic_mimetypes
-              ):
+                ("file", "-ib", path), universal_newlines=True
+            ).strip()
+            if re_mime_validate.match(output) and output not in generic_mimetypes:
                 # 'file' command can return status zero with invalid output
                 return output
         except (subprocess.CalledProcessError, FileNotFoundError):
             pass
         return None
+
+
 else:
+
     def by_file(path):
         return None
 

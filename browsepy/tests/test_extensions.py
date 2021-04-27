@@ -1,4 +1,3 @@
-
 import unittest
 import jinja2
 
@@ -9,16 +8,14 @@ class TestHTMLCompress(unittest.TestCase):
     extension = browsepy.transform.htmlcompress.HTMLCompress
 
     def setUp(self):
-        self.env = jinja2.Environment(
-            autoescape=True,
-            extensions=[self.extension]
-            )
+        self.env = jinja2.Environment(autoescape=True, extensions=[self.extension])
 
     def render(self, html, **kwargs):
         return self.env.from_string(html).render(**kwargs)
 
     def test_compress(self):
-        html = self.render('''
+        html = self.render(
+            """
             <html>
               <head>
                 <title>{{ title }}</title>
@@ -30,32 +27,27 @@ class TestHTMLCompress(unittest.TestCase):
                 {% if a %}b{% endif %}
               </body>
             </html>
-            ''', title=42, href='index.html', css='t', a=True)
+            """,
+            title=42,
+            href="index.html",
+            css="t",
+            a=True,
+        )
         self.assertEqual(
             html,
             '<html><head><title>42</title></head><body class="t prop">'
-            '<em><b>a</b><i> b</i></em>b'
-            '</body></html>'
-            )
+            "<em><b>a</b><i> b</i></em>b"
+            "</body></html>",
+        )
 
     def test_ignored_content(self):
-        html = self.render(
-            '<script\ndata-a >\n <a>   <a> asdf </script>\n<br> <br>'
-            )
-        self.assertEqual(
-            html,
-            '<script data-a>\n <a>   <a> asdf </script><br><br>'
-            )
+        html = self.render("<script\ndata-a >\n <a>   <a> asdf </script>\n<br> <br>")
+        self.assertEqual(html, "<script data-a>\n <a>   <a> asdf </script><br><br>")
 
     def test_cdata(self):
-        html = self.render(
-            '<![CDATA[\n<a>   <br>\n]]>\n<a>   <br>\n'
-            )
-        self.assertEqual(
-            html,
-            '<![CDATA[\n<a>   <br>\n]]><a><br>'
-            )
+        html = self.render("<![CDATA[\n<a>   <br>\n]]>\n<a>   <br>\n")
+        self.assertEqual(html, "<![CDATA[\n<a>   <br>\n]]><a><br>")
 
     def test_broken(self):
-        html = self.render('<script>\n <a>   <a> asdf ')
-        self.assertEqual(html, '<script>\n <a>   <a> asdf ')
+        html = self.render("<script>\n <a>   <a> asdf ")
+        self.assertEqual(html, "<script>\n <a>   <a> asdf ")
