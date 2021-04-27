@@ -36,6 +36,8 @@ app = Flask(
     )
 app.config.update(
     directory_base=os.getenv("DIRECTORY_BASE", compat.getcwd()),
+    performance_base=os.getenv("PERFORMANCE_BASE", compat.getcwd()),
+    security_base=os.getenv("SECURITY_BASE", compat.getcwd()),
     directory_start=None,
     directory_remove=None,
     directory_upload=None,
@@ -182,9 +184,11 @@ def sort(property, path):
     return response
 
 
-@app.route("/browse", defaults={"path": ""})
+@app.route("/browse/", defaults={"path": ""})
 @app.route('/browse/<path:path>')
 def browse(path):
+    if not path:
+        return redirect(url_for('.index'), 301)
     sort_property = get_cookie_browse_sorting(path, 'text')
     sort_fnc, sort_reverse = browse_sortkey_reverse(sort_property)
 
@@ -202,16 +206,13 @@ def browse(path):
         pass
     return NotFound()
 
-# TODO
-# logs highlighting
-# json formatting
-# csv formatting
+
 @app.route('/open/<path:path>', endpoint="open")
 def open_file(path):
     try:
         file = Node.from_urlpath(path)
-        content = file.content
-        if file.is_file and not file.is_excluded and file.extension != 'html':
+        if file.is_file and not file.is_excluded and file.extension not in ['html', 'css', 'js'] and "jmeter_report" not in file.parent.path :
+            content = file.content
             return stream_template(
                'file_preview.html',
                content=content,
@@ -297,12 +298,30 @@ def upload(path):
 
 @app.route("/")
 def index():
-    path = app.config["directory_start"] or app.config["directory_base"]
+    return stream_template(
+                'index.html'
+                )
+
+
+@app.route("/performance_data")
+def performance_data():
+    path = app.config["performance_base"]
+    try:
+        print(Node(path).urlpath)
+        urlpath = Node(path).urlpath
+    except OutsideDirectoryBase:
+        return NotFound()
+    return redirect(url_for('.browse',path=urlpath))
+
+
+@app.route("/security_data")
+def security_data():
+    path = app.config["security_base"]
     try:
         urlpath = Node(path).urlpath
     except OutsideDirectoryBase:
         return NotFound()
-    return browse(urlpath)
+    return redirect(url_for('.browse',path=urlpath))
 
 
 @app.after_request

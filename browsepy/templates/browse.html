@@ -79,7 +79,8 @@
   <ol class="navbar">
     {% for parent in file.ancestors[::-1] %}
       <li>
-        <a href="{{ url_for('browse', path=parent.urlpath) }}"
+        <a href="{{ url_for('browse', path=parent.
+        urlpath) }}"
            {% if parent.is_root %}class="root"{% endif %}
            >{{ parent.name }}</a>
       </li>
