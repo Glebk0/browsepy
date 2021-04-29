@@ -3,14 +3,23 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, user-scalable=no"/>
-  <title>{% block title %}{{ config.get("title", "BrowsePy") }}{% endblock %}</title>
+  <title>{% block title %}{{ config.get("title", "Browsepy") }}{% endblock %}</title>
   {% block styles %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}"/>
   {% endblock %}
   {% block head %}{% endblock %}
 </head>
 <body>
-  {% block header %}{% endblock %}
+  {% block header %}
+    <ol class="navigation">
+        <li style="float:right"><a href="{{ url_for('about') }}">About</a></li>
+        <li style="float:right"><a href="http://grafana/">Grafana</a></li>
+        <li style="float:right"><a href="{{ url_for('data', data_type="data") }}">Data</a></li>
+        <li style="float:right"><a href="{{ url_for('data', data_type="archived_data") }}">archived results</a></li>
+        <li style="float:right"><a href="{{ url_for('data', data_type="security_data") }}">Security Results</a></li>
+        <li style="float:right"><a href="{{ url_for('data', data_type="performance_data") }}">Performance Results</a></li> 
+    </ol>
+  {% endblock %}
   {% block content %}{% endblock %}
   {% block footer %}{% endblock %}
   {% block scripts %}{% endblock %}

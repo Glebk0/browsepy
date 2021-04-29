@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: UTF-8 -*-
-
 import logging
 import os
 import os.path
@@ -47,8 +44,10 @@ app = Flask(
 )
 app.config.update(
     directory_base=os.getenv("DIRECTORY_BASE", compat.getcwd()),
-    performance_base=os.getenv("PERFORMANCE_BASE", compat.getcwd()),
-    security_base=os.getenv("SECURITY_BASE", compat.getcwd()),
+    performance_data=os.getenv("PERFORMANCE_RESULTS", compat.getcwd()),
+    security_data=os.getenv("SECURITY_RESULTS", compat.getcwd()),
+    archived_data=os.getenv("MONSOON_RESULTS", compat.getcwd()),
+    nft_data=os.getenv("NFT_DATA", compat.getcwd()),
     directory_start=None,
     directory_remove=None,
     directory_upload=None,
@@ -227,8 +226,8 @@ def open_file(path):
 
 
 @app.route("/about")
-def about(path):
-    pass
+def about():
+    return stream_template("index.html")
 
 
 @app.route("/download/file/<path:path>")
@@ -298,21 +297,12 @@ def index():
     return stream_template("index.html")
 
 
-@app.route("/performance_data")
-def performance_data():
-    path = app.config["performance_base"]
+@app.route("/data")
+def data():
+    data_type = request.args.get('data_type')
+    path = app.config[data_type]
     try:
         print(Node(path).urlpath)
-        urlpath = Node(path).urlpath
-    except OutsideDirectoryBase:
-        return NotFound()
-    return redirect(url_for(".browse", path=urlpath))
-
-
-@app.route("/security_data")
-def security_data():
-    path = app.config["security_base"]
-    try:
         urlpath = Node(path).urlpath
     except OutsideDirectoryBase:
         return NotFound()
